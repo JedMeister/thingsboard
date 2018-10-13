@@ -1,0 +1,8 @@
+#include <turnkey/base>
+
+openjdk-8-jdk-headless
+
+postgresql
+postgresql-contrib
+
+nginx-light

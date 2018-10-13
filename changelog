@@ -1,0 +1,7 @@
+turnkey-thingsboard-15.0 (1) turnkey; urgency=low
+
+  * Initial appliance release.
+
+  * Includes ThingsBoard v2.1.0 installed from upstream .deb file.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Sat, 13 Oct 2018 16:54:11 +1100

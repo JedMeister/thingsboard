@@ -1,0 +1,47 @@
+#!/bin/sh -ex
+
+SRC=/usr/local/src
+ADMIN_PASS=turnkey
+ADMIN_EMAIL=admin@example.org
+
+APP_DOMAIN=www.example.com
+
+SRC=/usr/local/src
+
+DB_NAME=thingsboard
+DB_USER=thingsboard
+DB_PASS=$(mcookie)
+
+
+service postgresql start
+# create database
+su postgres -c "createuser --no-superuser --createdb --no-createrole $DB_USER"
+su postgres -c "createdb --owner $DB_USER -EUTF8 $DB_NAME"
+su postgres -c "psql postgres" << EOF
+alter user $DB_USER with encrypted password '$DB_PASS';
+EOF
+
+dpkg -i $SRC/thingsboard.deb
+rm $SRC/thingsboard.deb
+
+# rename default config and copy in customised conf (with postgres enabled)
+CONF=/usr/share/thingsboard/conf/thingsboard.yml
+mv $CONF $CONF.default
+mv $SRC/thingsboard.yml $CONF
+sed -i "\|SPRING_DATASOURCE_PASSWORD|s|D:.*|D:$DB_PASS}\"|" $CONF
+
+# tweak ThingsBoard RAM usage (so it works nicely on low RAM)
+cat >> /usr/share/thingsboard/conf/thingsboard.conf <<EOF
+
+# Restrict ThingsBoard memory usage to 256MB - can be tuned
+export JAVA_OPTS="\$JAVA_OPTS -Xms256M -Xmx256M"
+EOF
+
+# install without demo data
+/usr/share/thingsboard/bin/install/install.sh
+
+service postgresql stop
+
+# enabled nginx reverse proxy
+rm /etc/nginx/sites-enabled/default
+ln -s /etc/nginx/sites-available/thingsboard /etc/nginx/sites-enabled/thingsboard
