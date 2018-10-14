@@ -1,8 +1,8 @@
 #!/usr/bin/python
 """Set ThingsBoard admin email and password
 Option:
-    --password=     unless provided, will ask interactively
-    --email=    unless provided, will ask interactively
+    --pass=          unless provided, will ask interactively
+    --email=         unless provided, will ask interactively
 """
 
 import re
@@ -45,16 +45,16 @@ def main():
             d = Dialog('TurnKey Linux - First boot configuration')
 
         email = d.get_email(
-            "ThingsBoard Administrator's Email",
-            "Enter email address for ThingsBoard 'admin' account.",
+            "ThingsBoard System Administrator's Email",
+            "Enter email address for ThingsBoard System 'admin' account.",
             "admin@example.com")
 
     inithooks_cache.write('APP_EMAIL', email)
 
     if not password:
         password = d.get_password(
-            "ThingsBoard Admin Password",
-            "Enter new password for ThingsBoard 'admin' account.")
+            "ThingsBoard System Admin Password",
+            "Enter new password for ThingsBoard system 'admin' account.")
 
     salt = bcrypt.gensalt()
     hashpass = bcrypt.hashpw(password, salt)
